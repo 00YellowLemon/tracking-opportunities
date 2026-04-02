@@ -23,3 +23,19 @@ Long-running agents are designed to handle ambitious, long-horizon tasks (runnin
 *   **Don't use tight prompt-response loops for large tasks:** Jumping straight into execution without an approved plan leads to compounding errors on long-horizon work.
 *   **Don't rely on a single agent to remember the big picture:** A lone agent is likely to lose context or stop prematurely over a 24+ hour runtime.
 *   **Don't expect raw models to finish large tasks alone:** They need external mechanisms (plans, evaluators) to prevent them from stopping at partial completion.
+
+## Scaling Long-Running Agents
+
+**Source:** [Scaling long-running autonomous coding (Cursor Blog)](https://cursor.com/blog/scaling-agents)
+
+When scaling to hundreds of concurrent agents for massive projects, dynamic coordination often fails. Examples of these massive projects include building a web browser from scratch (1M+ lines of code) or executing large-scale framework migrations (e.g., Solid to React).
+
+Key architectural lessons for scaling agents include:
+
+*   **Avoid Flat Hierarchies and Locks:** Giving all agents equal status and using file-locking or optimistic concurrency for self-coordination creates severe bottlenecks. Agents become risk-averse, preferring small changes over solving hard problems.
+*   **Separate Roles (Planners vs. Workers):**
+    *   **Planners:** Continuously explore the codebase, break down work, and create tasks. Planning can be recursive (planners spawning sub-planners for specific areas).
+    *   **Workers:** Focus entirely on completing assigned tasks. They do not coordinate with other workers or worry about the big picture.
+*   **Implement Cycles and Fresh Starts:** At the end of a work cycle, a judge agent should determine whether to continue. Starting the next iteration fresh helps combat drift and tunnel vision.
+*   **Match Models to Roles:** Different foundation models excel at different tasks. For instance, some models are better at high-level planning and maintaining focus over extended periods, while others may be better suited for raw, localized coding.
+*   **Keep the System Simple:** Avoid over-engineering organizational designs. For example, adding dedicated "integrator" agents for conflict resolution can create bottlenecks, as worker agents are often capable of resolving version control conflicts themselves. Prompts matter more than complex harnesses.
