@@ -44,3 +44,23 @@ To make agents work autonomously over long periods:
 ## Key Takeaways for Harness Design (Building "Taste")
 *   **Optimize for the Task:** Just because a model was post-trained on a specific harness doesn't mean that harness is best for your task. Swapping or tuning the harness can yield massive performance gains (e.g., jumping from Top 30 to Top 5 on benchmarks).
 *   **Harnesses patch deficiencies AND amplify intelligence:** Even as models natively improve at planning or self-verification, a well-configured environment with durable state and tight verification loops will always make the underlying model more efficient.
+
+## Developing Taste and Evaluating Subjective Quality
+
+**Source:** [Harness design for long-running application development (Anthropic)](https://www.anthropic.com/engineering/harness-design-long-running-apps)
+
+To build "taste" into agents and handle subjective tasks (like frontend design) or long-running software engineering, harness design must address self-evaluation limits and context management.
+
+*   **Separate Generator and Evaluator Agents:** Models are notoriously lenient when grading their own work. Building a standalone, highly-skeptical "Evaluator" agent forces the "Generator" agent to improve iteratively against concrete feedback.
+*   **Make Subjective Quality Gradable:** Define concrete criteria (e.g., *Design Quality*, *Originality*, *Craft*, *Functionality*). Penalize generic patterns ("AI slop") heavily to encourage aesthetic risk-taking.
+*   **Three-Agent Architecture for Complex Builds:**
+    *   **Planner:** Turns simple prompts into high-level, ambitious product specs.
+    *   **Generator:** Builds the app in chunks, agreeing on a "sprint contract" (what "done" looks like) before coding.
+    *   **Evaluator:** Navigates the live app (e.g., via Playwright) to test features and ensure visual/functional quality against the contract.
+*   **Structured Handoffs vs. Compaction:** For massive tasks, passing structured state (files/artifacts) into a fresh context window ("context resets") is sometimes necessary.
+
+### The "Don'ts" of Agent Harnesses
+*   **Don't rely on self-evaluation for subjective tasks:** Agents will confidently praise their own mediocre work. Use a separate evaluator.
+*   **Don't over-specify technical implementation upfront:** The planner should focus on product features and deliverables, not granular technical specs, to prevent early mistakes from cascading through the build.
+*   **Don't use simple compaction if the model exhibits "context anxiety":** If an agent starts rushing to finish because it thinks it is nearing its context limit, give it a clean slate (context reset) with a structured handoff instead of just summarizing history.
+*   **Don't assume harness components are permanently necessary:** Every harness piece patches a model deficiency. As new models release with better base capabilities, regularly strip away scaffolding to see what is still load-bearing.
