@@ -29,6 +29,7 @@
 ### 4. Memory & Search (Continual Learning)
 *   Memory relies on the filesystem (e.g., reading/writing an `AGENTS.md` file) to inject durable knowledge across sessions.
 *   Search and MCP (Model Context Protocol) tools allow agents to retrieve information beyond their training data cutoff.
+*   *Further Reading:* See [Agent Memory Systems](agent_memory_systems.md) for more details on implementation and best practices.
 
 ## Combating Context Rot
 As context fills, agent reasoning degrades. A robust harness actively manages context:
