@@ -20,6 +20,11 @@
 *   **Explicit Management:** End users may still need to explicitly prompt the agent to reflect, summarize, or compact memory.
 *   **Human-in-the-Loop:** Require explicit human approval for memory updates to mitigate risks like prompt injection.
 
+## Learning Over Time (Context Evolution)
+**Source:** [How agents can use filesystems for context engineering (LangChain Blog)](https://blog.langchain.com/how-agents-can-use-filesystems-for-context-engineering/)
+*   **Automated Skill Updates:** An agent's skills and instructions can be treated as context stored in the filesystem. When users provide explicit or implicit feedback, the agent can write that information to its files to "remember" it for future iterations.
+*   **Personalization:** This approach is excellent for quickly learning and storing custom user preferences (e.g., names, preferred output formats) without requiring external manual prompt updates.
+
 ## Future Focus Areas
 *   **Background Processes:** Run background jobs (e.g., daily cron) to reflect on conversations and compact/generalize memories.
 *   **Episodic Memory Addition:** Expose past conversation logs as files for the agent to reference.

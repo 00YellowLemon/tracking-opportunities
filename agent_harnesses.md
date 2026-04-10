@@ -10,9 +10,14 @@
 ## Core Harness Components & Primitives
 
 ### 1. Filesystems (Durable Storage & Context)
+**Source:** [How agents can use filesystems for context engineering (LangChain Blog)](https://blog.langchain.com/how-agents-can-use-filesystems-for-context-engineering/)
+
 *   **The foundational primitive.** Provides a workspace for reading data, code, and docs.
 *   Allows agents to offload intermediate outputs and maintain state across sessions, avoiding context limits.
 *   Acts as a natural collaboration surface for multi-agent or human-agent teams.
+*   **Context Engineering & Scratch Pads:** Use the filesystem to write large tool results (e.g., raw web search content), keeping conversation history light and avoiding token limits. Agents can then intelligently search (`grep`) for needed keywords and read only the necessary context.
+*   **Dynamic Information Retrieval:** For tasks requiring vast amounts of context, agents can write plans, store subagent outputs, or dynamically load specific skill instructions from the filesystem rather than loading them all in the system prompt.
+*   **Niche Retrieval:** Instead of relying entirely on semantic search, agents can use filesystem traversal tools (`ls`, `glob`, `grep`) to precisely locate information in deeply nested structures (e.g., code files), taking advantage of pre-existing logical directory organizations.
 *   *Taste insight:* Version control (Git) integrated with the filesystem allows agents to track work, rollback errors, and branch experiments.
 
 ### 2. Bash + Code (General Purpose Tooling)
