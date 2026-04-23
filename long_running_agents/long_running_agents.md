@@ -39,3 +39,14 @@ Key architectural lessons for scaling agents include:
 *   **Implement Cycles and Fresh Starts:** At the end of a work cycle, a judge agent should determine whether to continue. Starting the next iteration fresh helps combat drift and tunnel vision.
 *   **Match Models to Roles:** Different foundation models excel at different tasks. For instance, some models are better at high-level planning and maintaining focus over extended periods, while others may be better suited for raw, localized coding.
 *   **Keep the System Simple:** Avoid over-engineering organizational designs. For example, adding dedicated "integrator" agents for conflict resolution can create bottlenecks, as worker agents are often capable of resolving version control conflicts themselves. Prompts matter more than complex harnesses.
+
+## Async Subagents for Long-Running Tasks
+
+**Source:** [Running Subagents in the Background (LangChain Blog)](https://www.langchain.com/blog/running-subagents-in-the-background)
+
+When a supervisor delegates complex, time-consuming tasks to subagents, the traditional synchronous (inline) execution loop creates severe bottlenecks. Async subagents resolve this by decoupling the supervisor from the subagent's execution process.
+
+*   **The Synchronous Bottleneck:** Inline subagents block the supervisor agent for the duration of the task. Because tool calls in an agent loop are synchronous, the supervisor cannot respond to user inputs, coordinate other tasks, or course-correct until the subagent finishes. This is a critical failure point for tasks that take hours.
+*   **"Fire-and-Steer" Paradigm:** Async subagents operate in the background. The supervisor launches a task and immediately receives a task ID, freeing it to handle user interaction, dispatch parallel subagents, or cancel obsolete work. This shifts the delegation pattern from "fire-and-forget" to a dynamic "fire-and-steer" approach.
+*   **Independent State and Process Separation:** True async subagents are not merely functions of the parent agent. They run as fully isolated agents with their own independent process, state, and memory thread.
+*   **Standardized Remote Management:** To orchestrate independent background agents effectively, communication should occur over a framework-agnostic API specification (such as the Agent Protocol). This provides standard endpoints for creating threads, launching runs, polling status, sending updates, and managing long-term memory, ensuring the supervisor is decoupled from how or where the subagent is deployed.
