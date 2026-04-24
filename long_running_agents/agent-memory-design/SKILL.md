@@ -1,46 +1,45 @@
 ---
 name: agent-memory-design
-description: Designs memory systems and architectural harnesses for long-running autonomous agents. Use when a user asks to "design an agent memory system", "architect a long-running agent", "build an agent harness", or "scale multi-agent coordination".
+description: Architect and design memory systems and harnesses for long-running autonomous agents. Use when users ask to design an agent memory system, architect a long-running agent, build an agent harness, scale multi-agent coordination, or implement agentic engineering workflows.
 ---
 
 # Agent Memory Design Skill
 
-This skill provides architectural guidance for designing memory systems and custom harnesses for long-running autonomous agents. Long-running agents handle ambitious, long-horizon tasks over hours or days, requiring specific architectures to mitigate model deficiencies in memory and follow-through.
+## CRITICAL: Initial Workflow Requirement
+* **Iterative User Interview:** Before generating any architecture, you MUST conduct an iterative user interview phase to gather comprehensive requirements. Ensure you fully understand the user's goals before proposing a design.
 
-## Architectural Principles for Memory and Harnesses
+## Core Architectural Principles
+When designing a memory system or harness for a long-running agent, you must incorporate these fundamental patterns:
 
-When designing an agent memory system, you must incorporate the following conceptual patterns:
+* **Custom Harnesses:** Tailor scaffolding to patch the specific frontier model's memory and follow-through deficiencies. Do not rely on raw model context windows alone.
+* **Upfront Planning:** Force the agent to generate a plan and secure human approval *before* any execution begins. This plan acts as the primary long-term memory anchor.
+* **Multi-Agent Verification:** Avoid relying on a single agent to maintain context over 24+ hours. Use separate evaluator agents to continuously check worker outputs against the approved plan.
+* **Cycles and Fresh Starts:** Use a "Judge" agent at the end of work cycles to determine continuation. Start the next cycle fresh to clear degraded short-term memory and prevent drift.
 
-### 1. Upfront Planning and Alignment
-Memory starts with a stable foundation.
-* **Action:** Force the agent to generate and secure human approval for a comprehensive plan *before* execution.
-* **Why:** Tight prompt-response loops fail on long tasks. A minor incorrect assumption early on compounds into a completely wrong solution by the end. The approved plan serves as the primary "long-term memory" anchor.
+## Architecture: Agentic Engineering & Role Separation
+Scale systems horizontally using distinct roles. Avoid flat hierarchies, file-locking, or optimistic concurrency for self-coordination.
 
-### 2. Multi-Agent Verification (Cross-Checking)
-A single agent cannot reliably hold the entire context over a 24+ hour runtime.
-* **Action:** Implement a system of multiple agents where separate evaluator agents check the worker agent's output against the established plan.
-* **Why:** Models lose track of the big picture, forget context, or stop at partial completion. Evaluator agents act as a persistent memory retrieval and correction mechanism, preventing drift.
+* **Leader Agents (Planners / Project Leaders):**
+  * Provide coordination, governance, and visibility across a swarm of worker agents.
+  * Continuously explore the codebase and recursively break down work.
+  * Manage long-term memory, maintain a shared prompt/workflow library, and handle cross-team orchestration.
+  * Separate orchestration (when/how agents act) from execution.
+* **Worker Agents (Individual Contributors):**
+  * Focus entirely on assigned tasks within defined boundaries.
+  * Retrieve short-term context from systems of record.
+  * Execute workflows using tools or coding agents as reasoning engines.
+  * Do not coordinate directly with other workers; report actions to the Leader Agent.
 
-### 3. Role Separation (Hierarchical Memory)
-Avoid flat hierarchies where all agents share the same global state and use locks to coordinate, as this creates bottlenecks and risk-averse behavior.
-* **Action:** Separate agents into "Planners" and "Workers".
-    * **Planners:** Continuously explore the codebase, maintain the global context (big picture memory), and recursively break down work into tasks.
-    * **Workers:** Maintain only local context (short-term memory) needed to complete a specific assigned task. They do not coordinate with other workers.
+## Architecture: Async Subagents
+For tasks taking hours, inline synchronous execution creates severe bottlenecks.
 
-### 4. Cycles and Fresh Starts
-Memory drift and tunnel vision are inevitable over long periods.
-* **Action:** Implement work cycles with a "Judge" agent. At the end of a cycle, the judge evaluates progress and determines if the work should continue.
-* **Why:** Starting the next iteration fresh clears degraded short-term context and forces the agent to re-orient based on the persistent plan and current codebase state.
-
-### 5. Custom Scaffolding over Raw Intelligence
-Do not rely on the raw model's context window alone to handle memory.
-* **Action:** Tailor the harness to the specific frontier model being used. Use different models for different roles (e.g., use a model with strong long-context reasoning for Planners, and a strong coding model for Workers).
-* **Why:** Every model has unique deficiencies. The harness must explicitly patch these gaps to ensure production-ready output (including tests and edge cases). Keep coordination mechanisms simple—worker agents can often resolve source control conflicts themselves without complex "integrator" agents.
+* **Decoupled Execution ("Fire-and-Steer"):** Launch subagents in the background. The supervisor receives a task ID immediately, freeing it to handle user interaction or dispatch other agents.
+* **Independent State:** Async subagents must run as fully isolated processes with their own independent state and memory threads.
+* **Standardized Remote Management:** Use a framework-agnostic API (e.g., Agent Protocol) for standardized communication (creating threads, polling status, managing memory).
 
 ## Implementation Guide
-
-When asked to design a memory system, structure your output to address:
-1. **The Planning State:** How the initial plan is stored, represented, and updated.
-2. **The Verification Loop:** How evaluator agents access both the plan and the current state to verify work.
-3. **The Role Definition:** Which agents hold global context vs. local context.
-4. **The Context Reset:** The mechanism for ending a cycle, judging progress, and providing a fresh context window for the next iteration.
+Structure your final output with exactly these sections:
+1. **Architecture Overview:** Describe the Leader/Worker roles, custom scaffolding, and async subagent implementation.
+2. **Memory Design:** Detail how the initial plan is stored, how Planners maintain global context, and how Workers use local context.
+3. **Evaluation Loop:** Explain how evaluator agents access the plan and current state to verify work, including the cycle reset mechanism.
+4. **Subagent Hierarchy:** Define the breakdown of tasks and standardized remote management endpoints.
