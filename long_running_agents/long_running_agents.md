@@ -40,6 +40,37 @@ Key architectural lessons for scaling agents include:
 *   **Match Models to Roles:** Different foundation models excel at different tasks. For instance, some models are better at high-level planning and maintaining focus over extended periods, while others may be better suited for raw, localized coding.
 *   **Keep the System Simple:** Avoid over-engineering organizational designs. For example, adding dedicated "integrator" agents for conflict resolution can create bottlenecks, as worker agents are often capable of resolving version control conflicts themselves. Prompts matter more than complex harnesses.
 
+## Agentic Engineering: System-Level Multi-Agent Collaboration
+
+**Source:** [Agentic Engineering: How Swarms of AI Agents Are Redefining Software Engineering (LangChain Blog)](https://www.langchain.com/blog/agentic-engineering-redefining-software-engineering)
+
+Agentic engineering is a multi-agent coordination model where AI agents act as digital team members. The goal is to move software through the full delivery pipeline faster and safer by mirroring real-world engineering teams, rather than just treating AI as a collection of isolated assistants to write code faster.
+
+### Core Architectural Model: Leaders and Workers
+This model utilizes a native control plane for multi-agent coordination, enabling cross-team workflow orchestration, shared memory, and traceability across the entire software lifecycle. The architecture is built around two complementary roles:
+
+*   **Leader Agents (Project Leaders):**
+    *   Act as a digital project leader providing coordination, governance, and visibility across a swarm of worker agents.
+    *   Maintain a shared prompt and workflow library to standardize practices and lower onboarding friction.
+    *   Provide a common tool gateway for secure access to capabilities.
+    *   Manage long-term memory for continuous learning and global observability for system-wide auditing.
+    *   Separate orchestration (when and how agents act) from execution.
+*   **Worker Agents (Individual Contributors):**
+    *   Function autonomously within defined boundaries, retrieving context from systems of record (code repos, trackers, logs).
+    *   Interpret user intent, plan, and execute workflows using tools, coding agents, or subagents.
+    *   Validate outcomes for correctness and report actions to the Leader Agent for accountability.
+    *   Designed to be loosely coupled, enabling horizontal scaling and dynamic task delegation.
+
+### Agentic Engineering vs. AI Coding Agents
+While AI coding agents (like Codex or Claude) excel at translating intent into code within a single session, they operate at a fundamentally different abstraction level:
+
+*   **Scope:** AI coding agents operate within a bounded, user-driven loop. Agentic engineering is an orchestration control plane that manages end-to-end delivery across developer and team boundaries.
+*   **Relationship:** They are not competing. Codex-class coding models often run *inside* Worker Agents as reasoning and code-generation engines, while the agentic engineering framework handles state, memory, and cross-agent coordination.
+
+### Pilot Study Insights (Systemic Impact)
+*   **Debugging:** Coordinated execution across agents (e.g., cross-team triage) resulted in a 93% reduction in time-to-root-cause.
+*   **Development:** Workflows saw a 65% execution time reduction. Crucially, the biggest gains came from compressing downstream tasks (like functional testing post-PR merge) through coordinated agents, not just from faster initial code generation.
+
 ## Async Subagents for Long-Running Tasks
 
 **Source:** [Running Subagents in the Background (LangChain Blog)](https://www.langchain.com/blog/running-subagents-in-the-background)
